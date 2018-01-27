@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ZX5WebView.iml" filepath="$PROJECT_DIR$/ZX5WebView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://E:\workspace_as\zcolin_lib\ZX5WebView\libZWebView\libZWebView.iml" filepath="E:\workspace_as\zcolin_lib\ZX5WebView\libZWebView\libZWebView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libZX5WebView/libZX5WebView.iml" filepath="$PROJECT_DIR$/libZX5WebView/libZX5WebView.iml" />
+    </modules>
+  </component>
+</project>
