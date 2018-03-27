@@ -27,13 +27,13 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import com.zcolin.zx5webview.jsbridge.BridgeWebViewClient;
 
-
 /**
  * WebViewClient主要帮助WebView处理各种通知、请求事件的.
  */
 class ZX5WebViewClientWrapper extends BridgeWebViewClient {
     private WebViewClient webViewClient;
-    private ProgressBar   proBar;
+    private ProgressBar   horizontalProBar;
+    private View          circleProBar;
 
     ZX5WebViewClientWrapper(WebViewClient webViewClient) {
         this.webViewClient = webViewClient;
@@ -48,8 +48,13 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
         return this;
     }
 
-    public ZX5WebViewClientWrapper setProgressBar(ProgressBar bar) {
-        this.proBar = bar;
+    public ZX5WebViewClientWrapper setHorizontalProgressBar(ProgressBar bar) {
+        this.horizontalProBar = bar;
+        return this;
+    }
+
+    public ZX5WebViewClientWrapper setCircleProgressBar(View bar) {
+        this.circleProBar = bar;
         return this;
     }
 
@@ -65,8 +70,11 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        if (proBar != null) {
-            proBar.setVisibility(View.VISIBLE);
+        if (horizontalProBar != null) {
+            horizontalProBar.setVisibility(View.VISIBLE);
+        }
+        if (circleProBar != null) {
+            circleProBar.setVisibility(View.VISIBLE);
         }
         webViewClient.onPageStarted(view, url, favicon);
     }
@@ -74,8 +82,11 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        if (proBar != null) {
-            proBar.setVisibility(View.GONE);
+        if (horizontalProBar != null) {
+            horizontalProBar.setVisibility(View.GONE);
+        }
+        if (circleProBar != null) {
+            circleProBar.setVisibility(View.GONE);
         }
         webViewClient.onPageFinished(view, url);
     }

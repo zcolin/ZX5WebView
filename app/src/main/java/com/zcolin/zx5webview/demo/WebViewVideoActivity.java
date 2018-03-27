@@ -30,7 +30,8 @@ public class WebViewVideoActivity extends AppCompatActivity {
 
         webView = findViewById(R.id.webView);
         webView.setSupportVideoFullScreen(this);
-        webView.setSupportProgressBar();
+        webView.setSupportHorizontalProgressBar();
+        webView.setSupportCircleProgressBar();
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

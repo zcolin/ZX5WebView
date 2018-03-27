@@ -26,6 +26,7 @@ import android.view.ViewParent;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -42,7 +43,8 @@ public class ZX5WebView extends BridgeWebView {
 
     private ZX5WebViewClientWrapper   webViewClientWrapper;
     private ZX5WebChromeClientWrapper webChromeClientWrapper;
-    private ProgressBar               proBar;            //加载進度条
+    private ProgressBar               horizontalProBar;            //横向加载進度条
+    private View                      circleProBar;            //圆形加载進度条
     private boolean                   isSupportJsBridge;
     private boolean                   isSupportH5Location;
 
@@ -119,7 +121,8 @@ public class ZX5WebView extends BridgeWebView {
     @Override
     public void setWebViewClient(@NonNull WebViewClient webViewClient) {
         this.webViewClientWrapper = new ZX5WebViewClientWrapper(webViewClient);
-        webViewClientWrapper.setProgressBar(proBar);
+        webViewClientWrapper.setHorizontalProgressBar(horizontalProBar);
+        webViewClientWrapper.setCircleProgressBar(circleProBar);
         if (isSupportJsBridge) {
             webViewClientWrapper.setSupportJsBridge();
         }
@@ -130,13 +133,14 @@ public class ZX5WebView extends BridgeWebView {
     public void setWebChromeClient(@NonNull WebChromeClient webChromeClient) {
         if (webChromeClientWrapper == null) {
             this.webChromeClientWrapper = new ZX5WebChromeClientWrapper(webChromeClient);
-        } else if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper || webChromeClientWrapper instanceof ZX5VideoFullScreenWebChromeClient) {
+        } else if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper || webChromeClientWrapper instanceof 
+                ZX5VideoFullScreenWebChromeClient) {
             this.webChromeClientWrapper.setWebChromeClient(webChromeClient);
         } else {
             this.webChromeClientWrapper = new ZX5WebChromeClientWrapper(webChromeClient);
         }
 
-        webChromeClientWrapper.setProgressBar(proBar);
+        webChromeClientWrapper.setHorizontalProgressBar(horizontalProBar);
         if (isSupportH5Location) {
             webChromeClientWrapper.setSupportH5Location();
         }
@@ -229,17 +233,35 @@ public class ZX5WebView extends BridgeWebView {
     /**
      * 支持显示进度条
      */
-    public ZX5WebView setSupportProgressBar() {
+    public ZX5WebView setSupportCircleProgressBar() {
+        ViewGroup group = (ViewGroup) this.getParent();
+        RelativeLayout container = new RelativeLayout(getContext());
+        int index = group.indexOfChild(this);
+        group.removeView(this);
+        group.addView(container, index, this.getLayoutParams());
+        container.addView(this, new RelativeLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        circleProBar = LayoutInflater.from(getContext()).inflate(R.layout.zx5webview_view_webview_circle_progressbar, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AbsoluteLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        container.addView(circleProBar, params);
+        webViewClientWrapper.setCircleProgressBar(circleProBar);
+        return this;
+    }
+
+    /**
+     * 支持显示进度条
+     */
+    public ZX5WebView setSupportHorizontalProgressBar() {
         ViewGroup group = (ViewGroup) this.getParent();
         FrameLayout container = new FrameLayout(getContext());
         int index = group.indexOfChild(this);
         group.removeView(this);
         group.addView(container, index, this.getLayoutParams());
         container.addView(this, new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        proBar = (ProgressBar) LayoutInflater.from(getContext()).inflate(R.layout.zx5webview_view_webview_progressbar, null);
-        container.addView(proBar, new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, dip2px(getContext(), 4)));
-        webChromeClientWrapper.setProgressBar(proBar);
-        webViewClientWrapper.setProgressBar(proBar);
+        horizontalProBar = (ProgressBar) LayoutInflater.from(getContext()).inflate(R.layout.zx5webview_view_webview_horizontal_progressbar, null);
+        container.addView(horizontalProBar, new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, dip2px(getContext(), 4)));
+        webChromeClientWrapper.setHorizontalProgressBar(horizontalProBar);
+        webViewClientWrapper.setHorizontalProgressBar(horizontalProBar);
         return this;
     }
 
