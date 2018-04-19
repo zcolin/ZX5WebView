@@ -99,7 +99,6 @@ public class ZX5WebView extends BridgeWebView {
         webSetting.setJavaScriptEnabled(true);//支持JS
         webSetting.setJavaScriptCanOpenWindowsAutomatically(true);//支持通过JS打开新窗口 
         webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);//关闭webview中缓存 
-        webSetting.setAllowFileAccess(true);    //设置可以访问文件 
         webSetting.setAppCacheEnabled(true);    //开启 Application Caches 功能
         webSetting.setDomStorageEnabled(true);  // 开启 DOM storage API 功能
         webSetting.setDatabaseEnabled(true);    //开启 database storage API 功能
@@ -108,6 +107,10 @@ public class ZX5WebView extends BridgeWebView {
         setHorizontalScrollbarOverlay(true);
         setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
+        if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.JELLY_BEAN) {
+            webSetting.setAllowUniversalAccessFromFileURLs(true);//解决跨域问题
+        }
+        
         // webview从5.0开始默认不允许混合模式,https中不能加载http资源,需要设置开启。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSetting.setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
