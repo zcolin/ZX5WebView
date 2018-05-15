@@ -56,8 +56,6 @@ public class WebViewActivity extends FragmentActivity implements OnClickListener
                                                                                                                           .onCallBack("java 返回数据！！！"))
                                                                                                                   .create()
                                                                                                                   .show());
-        webView.registerStartActivity(mActivity);
-        webView.registerFinishActivity(mActivity);
     }
 
     public void loadUrl() {

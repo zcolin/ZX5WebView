@@ -10,11 +10,11 @@ package com.zcolin.zx5webview;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
@@ -43,8 +43,8 @@ public class ZX5WebView extends BridgeWebView {
 
     private ZX5WebViewClientWrapper   webViewClientWrapper;
     private ZX5WebChromeClientWrapper webChromeClientWrapper;
-    private ProgressBar               horizontalProBar;            //横向加载進度条
-    private View                      circleProBar;            //圆形加载進度条
+    private ProgressBar               horizontalProBar;         //横向加载進度条
+    private View                      customProBar;            //自定义加载進度条
     private boolean                   isSupportJsBridge;
     private boolean                   isSupportH5Location;
 
@@ -107,10 +107,10 @@ public class ZX5WebView extends BridgeWebView {
         setHorizontalScrollbarOverlay(true);
         setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
-        if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             webSetting.setAllowUniversalAccessFromFileURLs(true);//解决跨域问题
         }
-        
+
         // webview从5.0开始默认不允许混合模式,https中不能加载http资源,需要设置开启。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSetting.setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
@@ -125,7 +125,7 @@ public class ZX5WebView extends BridgeWebView {
     public void setWebViewClient(@NonNull WebViewClient webViewClient) {
         this.webViewClientWrapper = new ZX5WebViewClientWrapper(webViewClient);
         webViewClientWrapper.setHorizontalProgressBar(horizontalProBar);
-        webViewClientWrapper.setCircleProgressBar(circleProBar);
+        webViewClientWrapper.setCustomProgressBar(customProBar);
         if (isSupportJsBridge) {
             webViewClientWrapper.setSupportJsBridge();
         }
@@ -233,21 +233,38 @@ public class ZX5WebView extends BridgeWebView {
         }
     }
 
+
     /**
-     * 支持显示进度条
+     * 支持显示圆形进度条
      */
     public ZX5WebView setSupportCircleProgressBar() {
+        setSupportCustomProgressBar(R.layout.zx5webview_view_webview_circle_progressbar);
+        return this;
+    }
+
+    /**
+     * 支持自定义的圆形进度
+     */
+    public ZX5WebView setSupportCustomProgressBar(@LayoutRes int resId) {
+        setSupportCustomProgressBar(LayoutInflater.from(getContext()).inflate(resId, null));
+        return this;
+    }
+
+    /**
+     * 显示自定义的进度条
+     */
+    public ZX5WebView setSupportCustomProgressBar(View view) {
         ViewGroup group = (ViewGroup) this.getParent();
         RelativeLayout container = new RelativeLayout(getContext());
         int index = group.indexOfChild(this);
         group.removeView(this);
         group.addView(container, index, this.getLayoutParams());
         container.addView(this, new RelativeLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        circleProBar = LayoutInflater.from(getContext()).inflate(R.layout.zx5webview_view_webview_circle_progressbar, null);
+        customProBar = view;
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AbsoluteLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        container.addView(circleProBar, params);
-        webViewClientWrapper.setCircleProgressBar(circleProBar);
+        container.addView(customProBar, params);
+        webViewClientWrapper.setCustomProgressBar(customProBar);
         return this;
     }
 
@@ -366,32 +383,6 @@ public class ZX5WebView extends BridgeWebView {
     }
 
 
-    /**
-     * 注册启动Activity的web交互
-     */
-    public ZX5WebView registerStartActivity(final Activity activity) {
-        registerHandler("startActivity", (data, function) -> {
-            try {
-                Intent intent = new Intent();
-                ComponentName componentName = new ComponentName(activity.getPackageName(), activity.getPackageName() + "build/intermediates/exploded-aar/com"
-                        + ".android.support/support-v4/23.2.1/res" + data);
-                intent.setComponent(componentName);
-                activity.startActivity(intent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        return this;
-    }
-
-    /**
-     * 注册启动Activity的web交互
-     */
-    public ZX5WebView registerFinishActivity(final Activity activity) {
-        registerHandler("finishActivity", (data, function) -> activity.finish());
-        return this;
-    }
-
     @Override
     public void destroy() {
         // 如果先调用destroy()方法，则会命中if (isDestroyed()) return;这一行代码，需要先onDetachedFromWindow()，再
@@ -411,7 +402,7 @@ public class ZX5WebView extends BridgeWebView {
         try {
             super.destroy();
         } catch (Throwable ex) {
-            ex.printStackTrace();
+            Log.w("X5WebView-destory", ex.getMessage());
         }
     }
 }

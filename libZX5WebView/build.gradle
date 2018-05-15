@@ -23,7 +23,7 @@ android {
     }
 }
 
-dependencies {
+dependencies { 
     api fileTree(dir: 'libs', include: ['*.jar'])
     api "com.android.support:appcompat-v7:$supprotVersion"
 }
