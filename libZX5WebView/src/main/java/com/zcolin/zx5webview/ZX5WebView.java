@@ -161,11 +161,38 @@ public class ZX5WebView extends BridgeWebView {
      *      webView.processResult(requestCode, resultCode, intent);
      *  }
      * </pre>
+     *
+     * @param pickFile 文件选择自定义处理方式
+     *                 <p>
+     *                 pickFile参考如下
+     *                 Intent chooserIntent = new Intent(Intent.ACTION_GET_CONTENT);
+     *                 chooserIntent.setType(acceptType);
+     *                 if (fragment != null) {
+     *                 fragment.startActivityForResult(chooserIntent, REQUEST_CODE);
+     *                 } else if (activity != null) {
+     *                 activity.startActivityForResult(chooserIntent, REQUEST_CODE);
+     *                 }
      */
-    public ZX5WebView setSupportChooseFile(Activity activity) {
-        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(), activity);
+    public ZX5WebView setSupportChooseFile(Activity activity, IPickFile pickFile) {
+        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(), activity, pickFile);
         setWebChromeClient(webChromeClientWrapper.getWebChromeClient());
         return this;
+    }
+
+    /**
+     * 支持文件选择
+     * <p>
+     * <p>
+     * 需要在Activity的onActivityResult中调用:
+     * <pre>
+     *  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+     *       super.onActivityResult(requestCode, resultCode, intent);
+     *      webView.processResult(requestCode, resultCode, intent);
+     *  }
+     * </pre>
+     */
+    public ZX5WebView setSupportChooseFile(Activity activity) {
+        return this.setSupportChooseFile(activity, null);
     }
 
     /**
@@ -178,11 +205,38 @@ public class ZX5WebView extends BridgeWebView {
      *      webView.processResult(requestCode, resultCode, intent);
      *  }
      * </pre>
+     *
+     * @param pickFile 文件选择自定义处理方式
+     *                 <p>
+     *                 pickFile参考如下
+     *                 Intent chooserIntent = new Intent(Intent.ACTION_GET_CONTENT);
+     *                 chooserIntent.setType(acceptType);
+     *                 if (fragment != null) {
+     *                 fragment.startActivityForResult(chooserIntent, REQUEST_CODE);
+     *                 } else if (activity != null) {
+     *                 activity.startActivityForResult(chooserIntent, REQUEST_CODE);
+     *                 }
      */
-    public ZX5WebView setSupportChooseFile(Fragment fragment) {
-        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(), fragment);
+    public ZX5WebView setSupportChooseFile(Fragment fragment, IPickFile pickFile) {
+        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(), fragment, pickFile);
         setWebChromeClient(webChromeClientWrapper.getWebChromeClient());
         return this;
+    }
+
+    /**
+     * 支持文件选择
+     * <p>
+     * <p>
+     * 需要在Activity的onActivityResult中调用:
+     * <pre>
+     *  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+     *       super.onActivityResult(requestCode, resultCode, intent);
+     *      webView.processResult(requestCode, resultCode, intent);
+     *  }
+     * </pre>
+     */
+    public ZX5WebView setSupportChooseFile(Fragment fragment) {
+        return this.setSupportChooseFile(fragment, null);
     }
 
     /**

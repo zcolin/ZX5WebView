@@ -3,7 +3,10 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -27,3 +30,5 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     api "com.android.support:appcompat-v7:$supprotVersion"
 }
+
+apply from: './javadoc.gradle'

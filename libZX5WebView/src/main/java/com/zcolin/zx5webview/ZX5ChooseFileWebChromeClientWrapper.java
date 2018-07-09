@@ -32,38 +32,36 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
     private ValueCallback<Uri>   mUploadMessage;
     private Fragment             fragment;
     private Activity             activity;
+    private IPickFile            pickFile;
 
     /**
      * Context 必须为Fragment或者Activity的子类
      */
-    public ZX5ChooseFileWebChromeClientWrapper(WebChromeClient webChromeClient, Fragment fragment) {
+    public ZX5ChooseFileWebChromeClientWrapper(WebChromeClient webChromeClient, Fragment fragment, IPickFile pickFile) {
         super(webChromeClient);
         this.fragment = fragment;
+        this.pickFile = pickFile;
     }
 
     /**
      * Context 必须为Fragment或者Activity的子类
      */
-    public ZX5ChooseFileWebChromeClientWrapper(WebChromeClient webChromeClient, Activity activity) {
+    public ZX5ChooseFileWebChromeClientWrapper(WebChromeClient webChromeClient, Activity activity, IPickFile pickFile) {
         super(webChromeClient);
         this.activity = activity;
+        this.pickFile = pickFile;
     }
 
     // For Android > 4.1.1 
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String AcceptType, String capture) {
         String acceptType = TextUtils.isEmpty(AcceptType) ? "*/*" : AcceptType;
-        pickFile(null, uploadMsg, acceptType);
+        pickFile(null, uploadMsg, acceptType, false);
     }
 
     // For Android 3.0+ 文件选择  
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String AcceptType) {
         String acceptType = TextUtils.isEmpty(AcceptType) ? "*/*" : AcceptType;
-        pickFile(null, uploadMsg, acceptType);
-    }
-
-    // For Android < 3.0  
-    public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-        pickFile(null, uploadMsg, "*/*");
+        pickFile(null, uploadMsg, acceptType, false);
     }
 
     // For Android > 4.4
@@ -72,43 +70,45 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
     public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
         if (!super.onShowFileChooser(webView, filePathCallback, fileChooserParams)) {
             String acceptType = null;
+            boolean isMulti = false;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && fileChooserParams != null && fileChooserParams.getAcceptTypes() != null && 
                     fileChooserParams
                     .getAcceptTypes().length > 0) {
                 acceptType = fileChooserParams.getAcceptTypes()[0];
             }
+            if (fileChooserParams != null) {
+                isMulti = fileChooserParams.getMode() == android.webkit.WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE;
+            }
             acceptType = TextUtils.isEmpty(acceptType) ? "*/*" : acceptType;
-            pickFile(filePathCallback, null, acceptType);
+            pickFile(filePathCallback, null, acceptType, isMulti);
         }
         return true;
     }
 
-    
+
     /**
      * 实现选择文件方法
      */
-    private void pickFile(ValueCallback<Uri[]> filePathCallbacks, ValueCallback<Uri> filePathCallback, String acceptType) {
+    private void pickFile(ValueCallback<Uri[]> filePathCallbacks, ValueCallback<Uri> filePathCallback, String acceptType, boolean isMulti) {
         mUploadMessage = filePathCallback;
         mUploadMessages = filePathCallbacks;
-        Intent chooserIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        chooserIntent.setType(acceptType);
-
-        if (fragment != null) {
-            fragment.startActivityForResult(chooserIntent, REQUEST_CODE);
-        } else if (activity != null) {
-            activity.startActivityForResult(chooserIntent, REQUEST_CODE);
+        if (pickFile != null) {
+            pickFile.pickFile(acceptType, isMulti);
+        } else {
+            Intent chooserIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            chooserIntent.setType(acceptType);
+            if (fragment != null) {
+                fragment.startActivityForResult(chooserIntent, REQUEST_CODE);
+            } else if (activity != null) {
+                activity.startActivityForResult(chooserIntent, REQUEST_CODE);
+            }
         }
     }
 
     /**
-     * 在Activity或者fragment的onActivityResult中调用此函数
+     * 文件单选执行
      */
-    public boolean processResult(int requestCode, int resultCode, Intent intent) {
-        Uri result = null;
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && intent != null) {
-            result = intent.getData();
-        }
-
+    public boolean processResult(Uri result) {
         if (mUploadMessage != null) {
             mUploadMessage.onReceiveValue(result);
             mUploadMessage = null;
@@ -116,7 +116,30 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
             mUploadMessages.onReceiveValue(result == null ? null : new Uri[]{result});
             mUploadMessages = null;
         }
+        return true;
+    }
 
-        return result != null;
+    /**
+     * 文件多选执行
+     */
+    public boolean processResult(Uri[] result) {
+        if (mUploadMessages != null) {
+            mUploadMessages.onReceiveValue(result);
+            mUploadMessages = null;
+        }
+        return true;
+    }
+
+    /**
+     * 在Activity或者fragment的onActivityResult中调用此函数
+     * <p>
+     * 默认值支持单选
+     */
+    public boolean processResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && intent != null) {
+            processResult(intent.getData());
+            return true;
+        }
+        return false;
     }
 }
