@@ -1,5 +1,5 @@
 # ZX5WebView
-## 使用腾讯TBS x5 浏览器服务 封装常用功能，在使用中如果出现了什么不可预知的错误，可以使用基于原生WebView封装的[ZWebView](https://github.com/zcolin/ZX5WebView)。
+### 使用腾讯TBS x5 浏览器服务 封装常用功能，在使用中如果出现了什么不可预知的错误，可以使用基于原生WebView封装的[ZWebView](https://github.com/zcolin/ZX5WebView)。
 ##### 具体集成版本参照lib中的jar版本
 
 1. 支持全屏播放视频
@@ -26,7 +26,7 @@ allprojects {
 }
 ```
 
-##USAGE
+## USAGE
 
 ZWebView：
 ```
