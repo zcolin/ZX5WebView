@@ -47,6 +47,7 @@ public class ZX5WebView extends BridgeWebView {
     private View                      customProBar;            //自定义加载進度条
     private boolean                   isSupportJsBridge;
     private boolean                   isSupportH5Location;
+    private View                      errorView;
 
     /**
      * 在Application入口调用，初始化x5内核
@@ -292,22 +293,22 @@ public class ZX5WebView extends BridgeWebView {
      * 支持显示圆形进度条
      */
     public ZX5WebView setSupportCircleProgressBar() {
-        setSupportCustomProgressBar(R.layout.zx5webview_view_webview_circle_progressbar);
+        setSupportProgressBar(R.layout.zx5webview_view_webview_circle_progressbar);
         return this;
     }
 
     /**
      * 支持自定义的圆形进度
      */
-    public ZX5WebView setSupportCustomProgressBar(@LayoutRes int resId) {
-        setSupportCustomProgressBar(LayoutInflater.from(getContext()).inflate(resId, null));
+    public ZX5WebView setSupportProgressBar(@LayoutRes int resId) {
+        setSupportProgressBar(LayoutInflater.from(getContext()).inflate(resId, null));
         return this;
     }
 
     /**
      * 显示自定义的进度条
      */
-    public ZX5WebView setSupportCustomProgressBar(View view) {
+    public ZX5WebView setSupportProgressBar(View view) {
         ViewGroup group = (ViewGroup) this.getParent();
         RelativeLayout container = new RelativeLayout(getContext());
         int index = group.indexOfChild(this);
@@ -337,6 +338,55 @@ public class ZX5WebView extends BridgeWebView {
         webChromeClientWrapper.setHorizontalProgressBar(horizontalProBar);
         webViewClientWrapper.setHorizontalProgressBar(horizontalProBar);
         return this;
+    }
+
+    /**
+     * 支持显示加载失败view
+     */
+    public ZX5WebView setSupportErrorView() {
+        View errorView = LayoutInflater.from(getContext()).inflate(R.layout.zx5webview_view_webview_error, null);
+        errorView.findViewById(R.id.ll_container).setOnClickListener(v -> {
+            reload();
+        });
+        setSupportErrorView(errorView);
+        return this;
+    }
+
+
+    /**
+     * 支持显示加载失败view
+     */
+    public ZX5WebView setSupportErrorView(View view) {
+        ViewGroup group = (ViewGroup) this.getParent();
+        RelativeLayout container = new RelativeLayout(getContext());
+        int index = group.indexOfChild(this);
+        group.removeView(this);
+        group.addView(container, index, this.getLayoutParams());
+        container.addView(this, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        errorView = view;
+        errorView.setVisibility(GONE);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        container.addView(errorView, params);
+        webViewClientWrapper.setErrorView(errorView);
+        return this;
+    }
+
+    /**
+     * 隐藏errorview
+     */
+    public void hideErrorView() {
+        if (errorView != null) {
+            errorView.setVisibility(GONE);
+        }
+    }
+
+
+    @Override
+    public void reload() {
+        webViewClientWrapper.reset();
+        hideErrorView();
+        super.reload();
     }
 
     /**
@@ -436,6 +486,12 @@ public class ZX5WebView extends BridgeWebView {
         return false;
     }
 
+    /**
+     * 是否已经注入了js
+     */
+    public boolean isInjectJSBridge() {
+        return webViewClientWrapper.isInjectJSBridge();
+    }
 
     @Override
     public void destroy() {

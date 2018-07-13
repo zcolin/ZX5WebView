@@ -34,7 +34,8 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
     private WebViewClient webViewClient;
     private ProgressBar   horizontalProBar;
     private View          customProBar;
-
+    private View          errorView;
+    
     ZX5WebViewClientWrapper(WebViewClient webViewClient) {
         this.webViewClient = webViewClient;
     }
@@ -55,6 +56,12 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
 
     public ZX5WebViewClientWrapper setCustomProgressBar(View bar) {
         this.customProBar = bar;
+        return this;
+    }
+
+
+    public ZX5WebViewClientWrapper setErrorView(View errorView) {
+        this.errorView = errorView;
         return this;
     }
 
@@ -91,12 +98,31 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
         webViewClient.onPageFinished(view, url);
     }
 
+
     @Override
     public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
         super.onReceivedError(view, errorCode, description, failingUrl);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            if (errorView != null) {
+                errorView.setVisibility(View.VISIBLE);
+            }
+        }
         webViewClient.onReceivedError(view, errorCode, description, failingUrl);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+        super.onReceivedError(view, request, error);
+        if (request.isForMainFrame()) {
+            if (errorView != null) {
+                errorView.setVisibility(View.VISIBLE);
+            }
+        }
+        webViewClient.onReceivedError(view, request, error);
+    }
+    
+    
     @Override
     public void onLoadResource(WebView view, String url) {
         webViewClient.onLoadResource(view, url);
@@ -116,12 +142,6 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
     @Override
     public void onTooManyRedirects(WebView view, Message cancelMsg, Message continueMsg) {
         webViewClient.onTooManyRedirects(view, cancelMsg, continueMsg);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-        webViewClient.onReceivedError(view, request, error);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
