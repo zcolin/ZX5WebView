@@ -471,6 +471,26 @@ public class ZX5WebView extends BridgeWebView {
     }
 
     /**
+     * 支持文件选择的时候需要在onActivity中调用此函数
+     */
+    public boolean processResult(Uri uri) {
+        if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper) {
+            return ((ZX5ChooseFileWebChromeClientWrapper) webChromeClientWrapper).processResult(uri);
+        }
+        return false;
+    }
+
+    /**
+     * 支持文件选择的时候需要在onActivity中调用此函数
+     */
+    public boolean processResult(Uri[] uris) {
+        if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper) {
+            return ((ZX5ChooseFileWebChromeClientWrapper) webChromeClientWrapper).processResult(uris);
+        }
+        return false;
+    }
+
+    /**
      * 如果在视频全屏播放状态，取消全屏播放
      */
     public boolean hideCustomView() {
