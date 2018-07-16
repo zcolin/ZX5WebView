@@ -128,6 +128,8 @@ public class ZX5WebView extends BridgeWebView {
      */
     public void setLoadListener(LoadListener loadListener) {
         this.loadListener = loadListener;
+        webViewClientWrapper.setLoadListener(loadListener);
+        webChromeClientWrapper.setLoadListener(loadListener);
     }
 
     @Override
