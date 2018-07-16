@@ -31,11 +31,12 @@ import com.zcolin.zx5webview.jsbridge.BridgeWebViewClient;
  * WebViewClient主要帮助WebView处理各种通知、请求事件的.
  */
 class ZX5WebViewClientWrapper extends BridgeWebViewClient {
-    private WebViewClient webViewClient;
-    private ProgressBar   horizontalProBar;
-    private View          customProBar;
-    private View          errorView;
-    
+    private WebViewClient           webViewClient;
+    private ProgressBar             horizontalProBar;
+    private View                    customProBar;
+    private View                    errorView;
+    private ZX5WebView.LoadListener loadListener;
+
     ZX5WebViewClientWrapper(WebViewClient webViewClient) {
         this.webViewClient = webViewClient;
     }
@@ -46,6 +47,11 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
 
     public ZX5WebViewClientWrapper setWebViewClient(WebViewClient webViewClient) {
         this.webViewClient = webViewClient;
+        return this;
+    }
+
+    public ZX5WebViewClientWrapper setLoadListener(ZX5WebView.LoadListener listener) {
+        this.loadListener = listener;
         return this;
     }
 
@@ -83,6 +89,10 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
         if (customProBar != null) {
             customProBar.setVisibility(View.VISIBLE);
         }
+        if (loadListener != null) {
+            loadListener.onStart(url);
+        }
+
         webViewClient.onPageStarted(view, url, favicon);
     }
 
@@ -94,6 +104,9 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
         }
         if (customProBar != null) {
             customProBar.setVisibility(View.GONE);
+        }
+        if (loadListener != null) {
+            loadListener.onFinish(url);
         }
         webViewClient.onPageFinished(view, url);
     }
@@ -121,8 +134,8 @@ class ZX5WebViewClientWrapper extends BridgeWebViewClient {
         }
         webViewClient.onReceivedError(view, request, error);
     }
-    
-    
+
+
     @Override
     public void onLoadResource(WebView view, String url) {
         webViewClient.onLoadResource(view, url);

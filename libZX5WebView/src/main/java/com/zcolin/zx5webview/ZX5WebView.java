@@ -48,6 +48,7 @@ public class ZX5WebView extends BridgeWebView {
     private boolean                   isSupportJsBridge;
     private boolean                   isSupportH5Location;
     private View                      errorView;
+    private LoadListener              loadListener;
 
     /**
      * 在Application入口调用，初始化x5内核
@@ -122,11 +123,19 @@ public class ZX5WebView extends BridgeWebView {
         }
     }
 
+    /**
+     * 设置网页加载监听
+     */
+    public void setLoadListener(LoadListener loadListener) {
+        this.loadListener = loadListener;
+    }
+
     @Override
     public void setWebViewClient(@NonNull WebViewClient webViewClient) {
         this.webViewClientWrapper = new ZX5WebViewClientWrapper(webViewClient);
         webViewClientWrapper.setHorizontalProgressBar(horizontalProBar);
         webViewClientWrapper.setCustomProgressBar(customProBar);
+        webViewClientWrapper.setLoadListener(loadListener);
         if (isSupportJsBridge) {
             webViewClientWrapper.setSupportJsBridge();
         }
@@ -145,6 +154,7 @@ public class ZX5WebView extends BridgeWebView {
         }
 
         webChromeClientWrapper.setHorizontalProgressBar(horizontalProBar);
+        webViewClientWrapper.setLoadListener(loadListener);
         if (isSupportH5Location) {
             webChromeClientWrapper.setSupportH5Location();
         }
@@ -514,5 +524,17 @@ public class ZX5WebView extends BridgeWebView {
         } catch (Throwable ex) {
             Log.w("X5WebView-destory", ex.getMessage());
         }
+    }
+
+
+    /**
+     * 网页加载接口
+     */
+    public interface LoadListener {
+        void onStart(String url);
+
+        void onFinish(String url);
+
+        void onProgress(int progress);
     }
 }

@@ -33,9 +33,10 @@ import com.tencent.smtt.sdk.WebView;
  */
 class ZX5WebChromeClientWrapper extends WebChromeClient {
 
-    private WebChromeClient webChromeClient;
-    private ProgressBar     horizontalProBar;
-    private boolean         isSupportH5Location;//是否支持H5定位
+    private WebChromeClient         webChromeClient;
+    private ProgressBar             horizontalProBar;
+    private boolean                 isSupportH5Location;//是否支持H5定位
+    private ZX5WebView.LoadListener loadListener;
 
     ZX5WebChromeClientWrapper(WebChromeClient webChromeClient) {
         this.webChromeClient = webChromeClient;
@@ -47,6 +48,11 @@ class ZX5WebChromeClientWrapper extends WebChromeClient {
 
     public WebChromeClient setWebChromeClient(WebChromeClient webChromeClient) {
         this.webChromeClient = webChromeClient;
+        return this;
+    }
+
+    public WebChromeClient setLoadListener(ZX5WebView.LoadListener listener) {
+        this.loadListener = listener;
         return this;
     }
 
@@ -95,6 +101,9 @@ class ZX5WebChromeClientWrapper extends WebChromeClient {
     public void onProgressChanged(WebView view, int newProgress) {
         if (horizontalProBar != null) {
             horizontalProBar.setProgress(newProgress);
+        }
+        if (loadListener != null) {
+            loadListener.onProgress(newProgress);
         }
         webChromeClient.onProgressChanged(view, newProgress);
     }
