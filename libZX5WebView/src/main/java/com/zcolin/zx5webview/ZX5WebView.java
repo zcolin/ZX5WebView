@@ -34,6 +34,7 @@ import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import com.zcolin.zx5webview.jsbridge.BridgeWebView;
+import com.zcolin.zx5webview.jsbridge.BridgeWebViewClient;
 
 
 /**
@@ -41,14 +42,15 @@ import com.zcolin.zx5webview.jsbridge.BridgeWebView;
  */
 public class ZX5WebView extends BridgeWebView {
 
-    private ZX5WebViewClientWrapper   webViewClientWrapper;
-    private ZX5WebChromeClientWrapper webChromeClientWrapper;
-    private ProgressBar               horizontalProBar;         //横向加载進度条
-    private View                      customProBar;            //自定义加载進度条
-    private boolean                   isSupportJsBridge;
-    private boolean                   isSupportH5Location;
-    private View                      errorView;
-    private LoadListener              loadListener;
+    private ZX5WebViewClientWrapper                    webViewClientWrapper;
+    private ZX5WebChromeClientWrapper                  webChromeClientWrapper;
+    private ProgressBar                                horizontalProBar;         //横向加载進度条
+    private View                                       customProBar;            //自定义加载進度条
+    private boolean                                    isSupportJsBridge;
+    private boolean                                    isSupportH5Location;
+    private View                                       errorView;
+    private LoadListener                               loadListener;
+    private BridgeWebViewClient.OnInjectFinishListener injectFinishListener;
 
     /**
      * 在Application入口调用，初始化x5内核
@@ -157,6 +159,7 @@ public class ZX5WebView extends BridgeWebView {
 
         webChromeClientWrapper.setHorizontalProgressBar(horizontalProBar);
         webViewClientWrapper.setLoadListener(loadListener);
+        webViewClientWrapper.setOnInjectFinishListener(injectFinishListener);
         if (isSupportH5Location) {
             webChromeClientWrapper.setSupportH5Location();
         }
@@ -300,6 +303,13 @@ public class ZX5WebView extends BridgeWebView {
         }
     }
 
+    /**
+     * 设置js通讯组件注入完成监听
+     */
+    public void setOnInjectFinishListener(BridgeWebViewClient.OnInjectFinishListener listener) {
+        this.injectFinishListener = listener;
+        webViewClientWrapper.setOnInjectFinishListener(injectFinishListener);
+    }
 
     /**
      * 支持显示圆形进度条

@@ -24,15 +24,23 @@ import java.net.URLDecoder;
  * 和网页js通讯的webViewClient
  */
 public class BridgeWebViewClient extends WebViewClient {
-    private boolean isSupportJsBridge;
-    private boolean isReceiveError;
-    private boolean isInjectJSBridge;
+    private boolean                isSupportJsBridge;
+    private boolean                isReceiveError;
+    private boolean                isInjectJSBridge;
+    private OnInjectFinishListener injectFinishListener;
 
     /**
      * 支持JsBridge
      */
     public void setSupportJsBridge() {
         isSupportJsBridge = true;
+    }
+
+    /**
+     * 设置注入完成监听
+     */
+    public void setOnInjectFinishListener(OnInjectFinishListener listener) {
+        this.injectFinishListener = listener;
     }
 
     @Override
@@ -72,6 +80,13 @@ public class BridgeWebViewClient extends WebViewClient {
             if (!isReceiveError) {
                 BridgeUtil.webViewLoadLocalJs(view, BridgeWebView.toLoadJs);
                 isInjectJSBridge = true;
+                if (injectFinishListener != null) {
+                    injectFinishListener.onInjectFinish(true);
+                }
+            } else {
+                if (injectFinishListener != null) {
+                    injectFinishListener.onInjectFinish(false);
+                }
             }
 
             if (view instanceof BridgeWebView) {
@@ -106,5 +121,9 @@ public class BridgeWebViewClient extends WebViewClient {
     public void reset() {
         isReceiveError = false;
         isInjectJSBridge = false;
+    }
+
+    public interface OnInjectFinishListener {
+        void onInjectFinish(boolean success);
     }
 }
