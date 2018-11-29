@@ -464,10 +464,12 @@ public class ZX5WebView extends BridgeWebView {
         });
     }
 
+    @Override
     public WebViewClient getWebViewClient() {
         return webViewClientWrapper.getWebViewClient();
     }
 
+    @Override
     public WebChromeClient getWebChromeClient() {
         return webChromeClientWrapper.getWebChromeClient();
     }

@@ -28,7 +28,7 @@ android {
 
 dependencies { 
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api "com.android.support:appcompat-v7:$supprotVersion"
+    compileOnly "com.android.support:appcompat-v7:$supprotVersion"
 }
 
 apply from: './javadoc.gradle'
