@@ -140,6 +140,7 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
             processResult(intent.getData());
             return true;
         }
+        processResult((Uri) null);
         return false;
     }
 }
