@@ -9,6 +9,7 @@
 package com.zcolin.zx5webview.jsbridge;
 
 import android.content.Context;
+
 import com.tencent.smtt.sdk.WebView;
 
 import java.io.BufferedReader;
@@ -19,14 +20,16 @@ import java.io.InputStreamReader;
 public class BridgeUtil {
     final static String IOS_SCHEME         = "wvjbscheme://__BRIDGE_LOADED__";
     final static String YY_OVERRIDE_SCHEMA = "yy://";
-    final static String YY_RETURN_DATA     = YY_OVERRIDE_SCHEMA + "return/";//格式为   yy://return/{function}/returncontent
+    /** 格式为 yy://return/{function}/returncontent */
+    final static String YY_RETURN_DATA     = YY_OVERRIDE_SCHEMA + "return/";
     final static String YY_FETCH_QUEUE     = YY_RETURN_DATA + "_fetchQueue/";
     final static String EMPTY_STR          = "";
     final static String UNDERLINE_STR      = "_";
     final static String SPLIT_MARK         = "/";
 
     final static        String CALLBACK_ID_FORMAT          = "JAVA_CB_%s";
-    final static        String JS_HANDLE_MESSAGE_FROM_JAVA = "javascript:WebViewJavascriptBridge._handleMessageFromNative('%s');";
+    final static        String JS_HANDLE_MESSAGE_FROM_JAVA = "javascript:WebViewJavascriptBridge" +
+            "._handleMessageFromNative('%s');";
     final static        String JS_FETCH_QUEUE_FROM_JAVA    = "javascript:WebViewJavascriptBridge._fetchQueue();";
     public final static String JAVASCRIPT_STR              = "javascript:";
 

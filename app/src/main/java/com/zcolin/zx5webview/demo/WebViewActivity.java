@@ -1,11 +1,3 @@
-/*
- * *********************************************************
- *   author   colin
- *   company  telchina
- *   email    wanglin2046@126.com
- *   date     18-1-9 上午8:51
- * ********************************************************
- */
 package com.zcolin.zx5webview.demo;
 
 import android.app.Activity;
@@ -49,13 +41,18 @@ public class WebViewActivity extends FragmentActivity implements OnClickListener
     public void initWebView() {
         webView.setSupportJsBridge();
         webView.setSupportChooseFile(mActivity);
-        webView.setDefaultHandler(new DefaultHandler());//如果JS调用send方法，会走到DefaultHandler里
-        webView.registerHandler("submitFromWeb", (data, function) -> new AlertDialog.Builder(WebViewActivity.this).setMessage("监听到网页传入数据：" + data)
-                                                                                                                  .setPositiveButton("确定", (dialog, which) ->
-                                                                                                                          function
-                                                                                                                          .onCallBack("java 返回数据！！！"))
-                                                                                                                  .create()
-                                                                                                                  .show());
+        // 如果JS调用send方法，会走到DefaultHandler里
+        webView.setDefaultHandler(new DefaultHandler());
+        webView.registerHandler("submitFromWeb",
+                                (data, function) -> new AlertDialog.Builder(WebViewActivity.this).setMessage(
+                                        "监听到网页传入数据：" + data)
+                                                                                                 .setPositiveButton(
+                                                                                                         "确定",
+                                                                                                                    (dialog, which) -> function
+                                                                                                                            .onCallBack(
+                                                                                                                                    "java 返回数据！！！"))
+                                                                                                 .create()
+                                                                                                 .show());
     }
 
     public void loadUrl() {
@@ -63,7 +60,11 @@ public class WebViewActivity extends FragmentActivity implements OnClickListener
     }
 
     public void callJsFunc(String funcName, String strParam) {
-        webView.callHandler(funcName, strParam, data -> new AlertDialog.Builder(WebViewActivity.this).setMessage("网页返回数据：" + data).create().show());
+        webView.callHandler(funcName,
+                            strParam,
+                            data -> new AlertDialog.Builder(WebViewActivity.this).setMessage("网页返回数据：" + data)
+                                                                                 .create()
+                                                                                 .show());
         //webView.send("hello");
     }
 

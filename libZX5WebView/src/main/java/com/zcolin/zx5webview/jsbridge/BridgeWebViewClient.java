@@ -54,10 +54,11 @@ public class BridgeWebViewClient extends WebViewClient {
 
             if (view instanceof BridgeWebView) {
                 BridgeWebView webView = (BridgeWebView) view;
-                if (url.startsWith(BridgeUtil.YY_RETURN_DATA)) { // 如果是返回数据
+                // 如果是返回数据
+                if (url.startsWith(BridgeUtil.YY_RETURN_DATA)) {
                     webView.handlerReturnData(url);
                     return true;
-                } else if (url.startsWith(BridgeUtil.YY_OVERRIDE_SCHEMA)) { //
+                } else if (url.startsWith(BridgeUtil.YY_OVERRIDE_SCHEMA)) {
                     webView.flushMessageQueue();
                     return true;
                 } else if (url.startsWith(BridgeUtil.IOS_SCHEME)) {
@@ -78,7 +79,7 @@ public class BridgeWebViewClient extends WebViewClient {
         super.onPageFinished(view, url);
         if (isSupportJsBridge) {
             if (!isReceiveError) {
-                BridgeUtil.webViewLoadLocalJs(view, BridgeWebView.toLoadJs);
+                BridgeUtil.webViewLoadLocalJs(view, BridgeWebView.TO_LOAD_JS);
                 isInjectJSBridge = true;
                 if (injectFinishListener != null) {
                     injectFinishListener.onInjectFinish(true);

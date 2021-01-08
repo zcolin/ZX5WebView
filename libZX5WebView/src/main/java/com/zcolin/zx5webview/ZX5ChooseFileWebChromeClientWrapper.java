@@ -52,7 +52,8 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
         this.pickFile = pickFile;
     }
 
-    // For Android > 4.1.1 
+    // For Android > 4.1.1
+    @Override
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String AcceptType, String capture) {
         String acceptType = TextUtils.isEmpty(AcceptType) ? "*/*" : AcceptType;
         pickFile(null, uploadMsg, acceptType, false);
@@ -67,17 +68,18 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
     // For Android > 4.4
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
+            FileChooserParams fileChooserParams) {
         if (!super.onShowFileChooser(webView, filePathCallback, fileChooserParams)) {
             String acceptType = null;
             boolean isMulti = false;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && fileChooserParams != null && fileChooserParams.getAcceptTypes() != null && 
-                    fileChooserParams
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && fileChooserParams != null && fileChooserParams.getAcceptTypes() != null && fileChooserParams
                     .getAcceptTypes().length > 0) {
                 acceptType = fileChooserParams.getAcceptTypes()[0];
             }
             if (fileChooserParams != null) {
-                isMulti = fileChooserParams.getMode() == android.webkit.WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE;
+                isMulti =
+                        fileChooserParams.getMode() == android.webkit.WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE;
             }
             acceptType = TextUtils.isEmpty(acceptType) ? "*/*" : acceptType;
             pickFile(filePathCallback, null, acceptType, isMulti);
@@ -89,7 +91,8 @@ public class ZX5ChooseFileWebChromeClientWrapper extends ZX5WebChromeClientWrapp
     /**
      * 实现选择文件方法
      */
-    private void pickFile(ValueCallback<Uri[]> filePathCallbacks, ValueCallback<Uri> filePathCallback, String acceptType, boolean isMulti) {
+    private void pickFile(ValueCallback<Uri[]> filePathCallbacks, ValueCallback<Uri> filePathCallback,
+            String acceptType, boolean isMulti) {
         mUploadMessage = filePathCallback;
         mUploadMessages = filePathCallbacks;
         if (pickFile != null) {

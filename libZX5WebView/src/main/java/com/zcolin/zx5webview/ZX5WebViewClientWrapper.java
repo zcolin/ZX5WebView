@@ -31,6 +31,7 @@ import com.zcolin.zx5webview.jsbridge.BridgeWebViewClient;
  * WebViewClient主要帮助WebView处理各种通知、请求事件的.
  */
 class ZX5WebViewClientWrapper extends BridgeWebViewClient {
+
     private WebViewClient           webViewClient;
     private ProgressBar             horizontalProBar;
     private View                    customProBar;

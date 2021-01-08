@@ -1,12 +1,3 @@
-/*
- * *********************************************************
- *   author   colin
- *   company  telchina
- *   email    wanglin2046@126.com
- *   date     18-1-9 上午8:51
- * ********************************************************
- */
-
 package com.zcolin.zx5webview.demo.app;
 
 import com.zcolin.frame.BuildConfig;
@@ -24,6 +15,7 @@ public class App extends BaseApp {
         super.onCreate();
         LogUtil.LOG_DEBUG = BuildConfig.DEBUG;
 
+        // 初始化 webview 内核（建议可以放在启动页中初始化）
         ZX5WebView.init(this);
     }
 }

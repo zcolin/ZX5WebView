@@ -22,11 +22,11 @@ import java.util.List;
  */
 public class Message {
 
-    private String callbackId; //callbackId
-    private String responseId; //responseId
-    private String responseData; //responseData
-    private String data; //data of message
-    private String handlerName; //name of handler
+    private String callbackId;
+    private String responseId;
+    private String responseData;
+    private String data;
+    private String handlerName;
 
     private final static String CALLBACK_ID_STR   = "callbackId";
     private final static String RESPONSE_ID_STR   = "responseId";

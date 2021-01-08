@@ -27,6 +27,7 @@ import com.tencent.smtt.sdk.WebView;
  * webview默认的chromeClient是{@link ZX5WebChromeClientWrapper}
  */
 public class ZX5VideoFullScreenWebChromeClient extends ZX5WebChromeClientWrapper {
+
     private View                                  videoProgressView;
     private View                                  customView;
     private WebView                               webView;
@@ -35,8 +36,8 @@ public class ZX5VideoFullScreenWebChromeClient extends ZX5WebChromeClientWrapper
     private CustomViewShowStateListener           customViewShowStateListener;
     private Activity                              activity;
 
-    ZX5VideoFullScreenWebChromeClient(WebChromeClient webChromeClient, Activity activity, WebView webView, FrameLayout customViewContainer,
-            View videoProgressView) {
+    ZX5VideoFullScreenWebChromeClient(WebChromeClient webChromeClient, Activity activity, WebView webView,
+            FrameLayout customViewContainer, View videoProgressView) {
         super(webChromeClient);
         this.webView = webView;
         this.videoProgressView = videoProgressView;
@@ -87,8 +88,9 @@ public class ZX5VideoFullScreenWebChromeClient extends ZX5WebChromeClientWrapper
     public void onHideCustomView() {
         super.onHideCustomView();
 
-        if (customView == null)
+        if (customView == null) {
             return;
+        }
 
         webView.setVisibility(View.VISIBLE);
         customViewContainer.setVisibility(View.GONE);
@@ -106,7 +108,9 @@ public class ZX5VideoFullScreenWebChromeClient extends ZX5WebChromeClientWrapper
 
     private void toggleFullScreen(boolean isShowCustomView) {
         //横竖屏状态
-        activity.setRequestedOrientation(isShowCustomView ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        activity.setRequestedOrientation(isShowCustomView ?
+                                         ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
+                                         ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //actionBar显示状态
         if (activity instanceof AppCompatActivity) {

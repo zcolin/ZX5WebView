@@ -44,8 +44,10 @@ public class ZX5WebView extends BridgeWebView {
 
     private ZX5WebViewClientWrapper                    webViewClientWrapper;
     private ZX5WebChromeClientWrapper                  webChromeClientWrapper;
-    private ProgressBar                                horizontalProBar;         //横向加载進度条
-    private View                                       customProBar;            //自定义加载進度条
+    /** 横向加载进度条 */
+    private ProgressBar                                horizontalProBar;
+    /** 自定义加载进度条 */
+    private View                                       customProBar;
     private boolean                                    isSupportJsBridge;
     private boolean                                    isSupportH5Location;
     private View                                       errorView;
@@ -100,19 +102,26 @@ public class ZX5WebView extends BridgeWebView {
         setWebChromeClient(new WebChromeClient());
 
         WebSettings webSetting = getSettings();
-        webSetting.setJavaScriptEnabled(true);//支持JS
-        webSetting.setJavaScriptCanOpenWindowsAutomatically(true);//支持通过JS打开新窗口 
-        webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);//关闭webview中缓存 
-        webSetting.setAppCacheEnabled(true);    //开启 Application Caches 功能
-        webSetting.setDomStorageEnabled(true);  // 开启 DOM storage API 功能
-        webSetting.setDatabaseEnabled(true);    //开启 database storage API 功能
+        // 支持JS
+        webSetting.setJavaScriptEnabled(true);
+        // 支持通过JS打开新窗口
+        webSetting.setJavaScriptCanOpenWindowsAutomatically(true);
+        // 关闭webview中缓存
+        webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        // 开启 Application Caches 功能
+        webSetting.setAppCacheEnabled(true);
+        // 开启 DOM storage API 功能
+        webSetting.setDomStorageEnabled(true);
+        // 开启 database storage API 功能
+        webSetting.setDatabaseEnabled(true);
         webSetting.setGeolocationEnabled(true);
         setHorizontalScrollBarEnabled(false);
         setHorizontalScrollbarOverlay(true);
         setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            webSetting.setAllowUniversalAccessFromFileURLs(true);//解决跨域问题
+            // 解决跨域问题
+            webSetting.setAllowUniversalAccessFromFileURLs(true);
         }
 
         // webview从5.0开始默认不允许混合模式,https中不能加载http资源,需要设置开启。
@@ -150,8 +159,7 @@ public class ZX5WebView extends BridgeWebView {
     public void setWebChromeClient(@NonNull WebChromeClient webChromeClient) {
         if (webChromeClientWrapper == null) {
             this.webChromeClientWrapper = new ZX5WebChromeClientWrapper(webChromeClient);
-        } else if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper || webChromeClientWrapper instanceof 
-                ZX5VideoFullScreenWebChromeClient) {
+        } else if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper || webChromeClientWrapper instanceof ZX5VideoFullScreenWebChromeClient) {
             this.webChromeClientWrapper.setWebChromeClient(webChromeClient);
         } else {
             this.webChromeClientWrapper = new ZX5WebChromeClientWrapper(webChromeClient);
@@ -190,7 +198,9 @@ public class ZX5WebView extends BridgeWebView {
      *                 }
      */
     public ZX5WebView setSupportChooseFile(Activity activity, IPickFile pickFile) {
-        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(), activity, pickFile);
+        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(),
+                                                                         activity,
+                                                                         pickFile);
         setWebChromeClient(webChromeClientWrapper.getWebChromeClient());
         return this;
     }
@@ -234,7 +244,9 @@ public class ZX5WebView extends BridgeWebView {
      *                 }
      */
     public ZX5WebView setSupportChooseFile(Fragment fragment, IPickFile pickFile) {
-        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(), fragment, pickFile);
+        webChromeClientWrapper = new ZX5ChooseFileWebChromeClientWrapper(webChromeClientWrapper.getWebChromeClient(),
+                                                                         fragment,
+                                                                         pickFile);
         setWebChromeClient(webChromeClientWrapper.getWebChromeClient());
         return this;
     }
@@ -283,23 +295,33 @@ public class ZX5WebView extends BridgeWebView {
         //将原来的布局之间添加一层，用来盛放webView和视频全屏控件
         group.removeView(this);
         group.addView(container, index, this.getLayoutParams());
-        container.addView(this, new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(this,
+                          new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT,
+                                                       ViewGroup.LayoutParams.MATCH_PARENT));
 
         //添加视频ViewContainer
         FrameLayout flCustomContainer = new FrameLayout(getContext());
         flCustomContainer.setVisibility(View.INVISIBLE);
-        container.addView(flCustomContainer, new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(flCustomContainer,
+                          new FrameLayout.LayoutParams(AbsoluteLayout.LayoutParams.MATCH_PARENT,
+                                                       ViewGroup.LayoutParams.MATCH_PARENT));
 
-        View videoProgressView = LayoutInflater.from(activity).inflate(R.layout.zx5webview_view_webview_video_progress, null);
-        webChromeClientWrapper = new ZX5VideoFullScreenWebChromeClient(webChromeClientWrapper.getWebChromeClient(), activity, this, flCustomContainer, 
-                videoProgressView);
+        View videoProgressView = LayoutInflater.from(activity)
+                                               .inflate(R.layout.zx5webview_view_webview_video_progress, null);
+        webChromeClientWrapper = new ZX5VideoFullScreenWebChromeClient(webChromeClientWrapper.getWebChromeClient(),
+                                                                       activity,
+                                                                       this,
+                                                                       flCustomContainer,
+                                                                       videoProgressView);
         setWebChromeClient(webChromeClientWrapper.getWebChromeClient());
         return this;
     }
 
-    public void setCustomViewShowStateListener(ZX5VideoFullScreenWebChromeClient.CustomViewShowStateListener customViewShowStateListener) {
+    public void setCustomViewShowStateListener(
+            ZX5VideoFullScreenWebChromeClient.CustomViewShowStateListener customViewShowStateListener) {
         if (webChromeClientWrapper != null && webChromeClientWrapper instanceof ZX5VideoFullScreenWebChromeClient) {
-            ((ZX5VideoFullScreenWebChromeClient) webChromeClientWrapper).setCustomViewShowStateListener(customViewShowStateListener);
+            ((ZX5VideoFullScreenWebChromeClient) webChromeClientWrapper).setCustomViewShowStateListener(
+                    customViewShowStateListener);
         }
     }
 
@@ -336,9 +358,12 @@ public class ZX5WebView extends BridgeWebView {
         int index = group.indexOfChild(this);
         group.removeView(this);
         group.addView(container, index, this.getLayoutParams());
-        container.addView(this, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(this,
+                          new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                                                          ViewGroup.LayoutParams.MATCH_PARENT));
         customProBar = view;
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                                                                             ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         container.addView(customProBar, params);
         webViewClientWrapper.setCustomProgressBar(customProBar);
@@ -354,9 +379,14 @@ public class ZX5WebView extends BridgeWebView {
         int index = group.indexOfChild(this);
         group.removeView(this);
         group.addView(container, index, this.getLayoutParams());
-        container.addView(this, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        horizontalProBar = (ProgressBar) LayoutInflater.from(getContext()).inflate(R.layout.zx5webview_view_webview_horizontal_progressbar, null);
-        container.addView(horizontalProBar, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dip2px(getContext(), 3)));
+        container.addView(this,
+                          new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                                                       ViewGroup.LayoutParams.MATCH_PARENT));
+        horizontalProBar = (ProgressBar) LayoutInflater.from(getContext())
+                                                       .inflate(R.layout.zx5webview_view_webview_horizontal_progressbar,
+                                                                null);
+        container.addView(horizontalProBar,
+                          new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dip2px(getContext(), 3)));
         webChromeClientWrapper.setHorizontalProgressBar(horizontalProBar);
         webViewClientWrapper.setHorizontalProgressBar(horizontalProBar);
         return this;
@@ -384,10 +414,13 @@ public class ZX5WebView extends BridgeWebView {
         int index = group.indexOfChild(this);
         group.removeView(this);
         group.addView(container, index, this.getLayoutParams());
-        container.addView(this, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(this,
+                          new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                                                          ViewGroup.LayoutParams.MATCH_PARENT));
         errorView = view;
         errorView.setVisibility(GONE);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                                                                             ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         container.addView(errorView, params);
         webViewClientWrapper.setErrorView(errorView);
@@ -479,7 +512,9 @@ public class ZX5WebView extends BridgeWebView {
      */
     public boolean processResult(int requestCode, int resultCode, Intent intent) {
         if (webChromeClientWrapper instanceof ZX5ChooseFileWebChromeClientWrapper) {
-            return ((ZX5ChooseFileWebChromeClientWrapper) webChromeClientWrapper).processResult(requestCode, resultCode, intent);
+            return ((ZX5ChooseFileWebChromeClientWrapper) webChromeClientWrapper).processResult(requestCode,
+                                                                                                resultCode,
+                                                                                                intent);
         }
         return false;
     }
