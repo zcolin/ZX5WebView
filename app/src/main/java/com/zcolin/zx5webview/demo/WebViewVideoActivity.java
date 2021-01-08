@@ -1,7 +1,7 @@
 package com.zcolin.zx5webview.demo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.tencent.smtt.sdk.WebView;

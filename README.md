@@ -15,7 +15,6 @@
 app的build.gradle中添加
 ```
 dependencies {
-    implementation "com.android.support:appcompat-v7:你的版本号"
     implementation 'com.github.zcolin:ZX5WebView:latest.release'
 }
 ```

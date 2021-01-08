@@ -10,7 +10,7 @@ package com.zcolin.zx5webview.jsbridge;
 
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
