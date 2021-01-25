@@ -81,7 +81,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':libZX5WebView')
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.github.zcolin:ZFrame:2.1.4'
+    implementation 'com.github.zcolin:ZFrame:3.0.0'
 }
 
 
